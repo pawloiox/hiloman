@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrukcja HILOTHERM HT 02</title>
+    <!-- Import Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Konfiguracja niestandardowego motywu (opcjonalnie) -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'szpital-blue': {
+                            DEFAULT: '#005a9c', // Ciemniejszy niebieski
+                            light: '#e6f0f7',  // Jasny niebieski tła
+                            dark: '#003e6b'   // Bardzo ciemny niebieski
+                        },
+                        'szpital-grey': {
+                            light: '#f1f5f9', // Jasnoszary (slate-100)
+                            DEFAULT: '#64748b', // Szary (slate-500)
+                            dark: '#334155'  // Ciemnoszary (slate-700)
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'], // Użycie czcionki Inter
+                    },
+                },
+            },
+        };
+    </script>
+    <!-- Import czcionki Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Style dla płynnego przewijania i offsetu dla sticky header -->
+    <style>
+        html {
+            scroll-behavior: smooth;
+            /* Zapewnia, że linki-kotwice nie lądują pod nagłówkiem */
+            scroll-padding-top: 80px; 
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Niestandardowe style dla pionowej osi czasu */
+        .timeline-step::after {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 48px;
+            bottom: -16px;
+            width: 2px;
+            background-color: #cbd5e1; /* slate-300 */
+            z-index: 1;
+        }
+        .timeline-step:last-child::after {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-szpital-grey-light text-szpital-grey-dark">
+
+    <!-- Sticky Header / Nawigacja -->
+    <header class="bg-white shadow-md sticky top-0 z-50 w-full">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo / Tytuł -->
+                <div class="flex-shrink-0">
+                    <h1 class="text-xl font-bold text-szpital-blue">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block -mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        HILOTHERM HT 02
+                    </h1>
+                </div>
+                
+                <!-- Nawigacja Desktop -->
+                <nav class="hidden md:flex space-x-1">
+                    <a href="#start" class="text-szpital-grey-dark hover:bg-szpital-blue-light hover:text-szpital-blue-dark px-3 py-2 rounded-md text-sm font-medium transition-colors">Start</a>
+                    <a href="#safety" class="text-szpital-grey-dark hover:bg-szpital-blue-light hover:text-szpital-blue-dark px-3 py-2 rounded-md text-sm font-medium transition-colors">Bezpieczeństwo</a>
+                    <a href="#alarms" class="text-szpital-grey-dark hover:bg-szpital-blue-light hover:text-szpital-blue-dark px-3 py-2 rounded-md text-sm font-medium transition-colors">Alarmy</a>
+                    <a href="#cleaning" class="text-szpital-grey-dark hover:bg-szpital-blue-light hover:text-szpital-blue-dark px-3 py-2 rounded-md text-sm font-medium transition-colors">Czyszczenie</a>
+                </nav>
+                
+                <!-- Przycisk Menu Mobilnego -->
+                <div class="md:hidden">
+                    <button id="menu-btn" class="inline-flex items-center justify-center p-2 rounded-md text-szpital-grey hover:text-szpital-blue hover:bg-szpital-blue-light focus:outline-none focus:ring-2 focus:ring-inset focus:ring-szpital-blue">
+                        <span class="sr-only">Otwórz menu</span>
+                        <!-- Ikona Hamburger -->
+                        <svg id="menu-icon-open" class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                        </svg>
+                        <!-- Ikona Zamknij (X) -->
+                        <svg id="menu-icon-close" class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Menu Mobilne (rozwijane) -->
+        <div id="menu-links" class="hidden md:hidden shadow-lg border-t border-gray-200">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#start" class="text-szpital-grey-dark hover:bg-szpital-blue-light hover:text-szpital-blue block px-3 py-2 rounded-md text-base font-medium transition-colors">Start</a>
+                <a href="#safety" class="text-szpital-grey-dark hover:bg-szpital-blue-light hover:text-szpital-blue block px-3 py-2 rounded-md text-base font-medium transition-colors">Bezpieczeństwo</a>
+                <a href="#alarms" class="text-szpital-grey-dark hover:bg-szpital-blue-light hover:text-szpital-blue block px-3 py-2 rounded-md text-base font-medium transition-colors">Alarmy</a>
+                <a href="#cleaning" class="text-szpital-grey-dark hover:bg-szpital-blue-light hover:text-szpital-blue block px-3 py-2 rounded-md text-base font-medium transition-colors">Czyszczenie</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Główna treść -->
+    <main class="container mx-auto p-4 sm:p-6 lg:p-8 max-w-5xl">
+
+        <!-- Sekcja: Przegląd Urządzenia -->
+        <section class="bg-white p-6 rounded-lg shadow-lg mb-8">
+            <h2 class="text-2xl font-bold text-szpital-blue mb-4">Przegląd Urządzenia (Model HT 02)</h2>
+            <p class="mb-4 text-szpital-grey-dark">Poniżej znajdują się kluczowe elementy panelu górnego urządzenia, z którymi będziesz wchodzić w interakcję.</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <ul class="space-y-3">
+                    <li class="flex items-center">
+                        <span class="flex-shrink-0 w-8 h-8 bg-szpital-blue text-white rounded-full flex items-center justify-center font-bold text-sm mr-3">01</span>
+                        <span class="text-szpital-grey-dark">Złącza (do podłączenia węży)</span>
+                    </li>
+                    <li class="flex items-center">
+                        <span class="flex-shrink-0 w-8 h-8 bg-szpital-blue text-white rounded-full flex items-center justify-center font-bold text-sm mr-3">02</span>
+                        <span class="text-szpital-grey-dark">Filtr i wlew wody</span>
+                    </li>
+                    <li class="flex items-center">
+                        <span class="flex-shrink-0 w-8 h-8 bg-szpital-blue text-white rounded-full flex items-center justify-center font-bold text-sm mr-3">03</span>
+                        <span class="text-szpital-grey-dark">Wyświetlacz (pokazuje temp. zadaną i błędy)</span>
+                    </li>
+                    <li class="flex items-center">
+                        <span class="flex-shrink-0 w-8 h-8 bg-szpital-blue text-white rounded-full flex items-center justify-center font-bold text-sm mr-3">04</span>
+                        <span class="text-szpital-grey-dark">Panel sterowania (przyciski)</span>
+                    </li>
+                </ul>
+                <ul class="space-y-3">
+                    <li class="flex items-center">
+                        <span class="flex-shrink-0 w-8 h-8 bg-gray-400 text-white rounded-full flex items-center justify-center font-bold text-sm mr-3">05</span>
+                        <span class="text-szpital-grey-dark">Wskaźnik poziomu wody / Rurka spustowa</span>
+                    </li>
+                    <li class="flex items-center">
+                        <span class="flex-shrink-0 w-8 h-8 bg-gray-400 text-white rounded-full flex items-center justify-center font-bold text-sm mr-3">06</span>
+                        <span class="text-szpital-grey-dark">Boczne otwory wentylacyjne</span>
+                    </li>
+                    <li class="flex items-center">
+                        <span class="flex-shrink-0 w-8 h-8 bg-gray-400 text-white rounded-full flex items-center justify-center font-bold text-sm mr-3">07</span>
+                        <span class="text-szpital-grey-dark">Uchwyt do przenoszenia</span>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Sekcja: Bezpieczeństwo -->
+        <section id="safety" class="scroll-mt-24 mb-8">
+            <div class="bg-red-50 border-l-4 border-red-500 text-red-800 p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold text-red-700 mb-4 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    Ważne Instrukcje Bezpieczeństwa
+                </h2>
+                <ul class="list-disc list-inside space-y-2">
+                    <li>Przed uruchomieniem zawsze sprawdź urządzenie i mankiety pod kątem uszkodzeń.</li>
+                    <li>Używaj <strong>tylko wody demineralizowanej</strong> do napełniania zbiornika.</li>
+                    <li>Nigdy nie zakrywaj bocznych otworów wentylacyjnych. Zachowaj min. 20 cm odstępu od innych przedmiotów.</li>
+                    <li>Urządzenie musi stać na równej i twardej powierzchni.</li>
+                    <li>Odłącz urządzenie od zasilania przed napełnianiem wodą lub czyszczeniem.</li>
+                    <li>Używaj wyłącznie oryginalnych mankietów i akcesoriów HILOTHERM.</li>
+                    <li>Monitoruj temperaturę ciała pacjenta, szczególnie przy stosowaniu dużych mankietów.</li>
+                    <li>Nie zginaj ani nie ściskaj mankietów i węży – może to zablokować przepływ wody.</li>
+                    <li>W przypadku awarii natychmiast wyłącz urządzenie głównym włącznikiem z tyłu.</li>
+                    <li>Mankiety mogą być stosowane wyłącznie na nieuszkodzonej skórze lub na opatrunkach.</li>
+                </ul>
+            </div>
+        </section>
+        
+        <!-- Sekcja: Uruchomienie i Obsługa (Krok po Kroku) -->
+        <section id="start" class="scroll-mt-24 mb-8">
+            <h2 class="text-3xl font-bold text-szpital-blue-dark text-center mb-8">Uruchomienie i Obsługa (Krok po Kroku)</h2>
+            
+            <ol class="space-y-8">
+                <!-- Krok 1 -->
+                <li class="relative flex items-start timeline-step">
+                    <div class="flex-shrink-0 w-10 h-10 bg-szpital-blue rounded-full flex items-center justify-center text-white font-bold text-lg z-10 shadow">1</div>
+                    <div class="ml-6 bg-white p-6 rounded-lg shadow-md w-full">
+                        <h3 class="text-xl font-semibold text-szpital-blue-dark mb-2">Kontrola i Ustawienie</h3>
+                        <p class="text-szpital-grey-dark">Upewnij się, że urządzenie stoi na płaskiej powierzchni, a otwory wentylacyjne są odsłonięte. Sprawdź, czy urządzenie i mankiety nie są uszkodzone.</p>
+                    </div>
+                </li>
+
+                <!-- Krok 2 -->
+                <li class="relative flex items-start timeline-step">
+                    <div class="flex-shrink-0 w-10 h-10 bg-szpital-blue rounded-full flex items-center justify-center text-white font-bold text-lg z-10 shadow">2</div>
+                    <div class="ml-6 bg-white p-6 rounded-lg shadow-md w-full">
+                        <h3 class="text-xl font-semibold text-szpital-blue-dark mb-2">Napełnianie i Odpowietrzanie</h3>
+                        <p class="text-szpital-grey-dark mb-2">Napełnij zbiornik <strong>wodą demineralizowaną</strong>. Poziom wody musi znajdować się między wskaźnikami "min" i "max".</p>
+                        <div class="bg-yellow-50 border-l-4 border-yellow-400 text-yellow-800 p-3 rounded mt-3">
+                            <strong>Pierwsze uruchomienie / po wymianie wody:</strong> Konieczne jest odpowietrzenie pompy. Użyj zestawu do odpowietrzania (strzykawka), aby usunąć powietrze z systemu przez jedno ze złączy. Włącz urządzenie <strong>tylko z podłączonym mankietem</strong>, aby pompa nie pracowała na sucho.
+                        </div>
+                    </div>
+                </li>
+
+                <!-- Krok 3 -->
+                <li class="relative flex items-start timeline-step">
+                    <div class="flex-shrink-0 w-10 h-10 bg-szpital-blue rounded-full flex items-center justify-center text-white font-bold text-lg z-10 shadow">3</div>
+                    <div class="ml-6 bg-white p-6 rounded-lg shadow-md w-full">
+                        <h3 class="text-xl font-semibold text-szpital-blue-dark mb-2">Włączenie Urządzenia</h3>
+                        <p class="text-szpital-grey-dark">Podłącz kabel zasilający. Włącz urządzenie głównym włącznikiem znajdującym się z tyłu obudowy. Urządzenie przeprowadzi autotest, po którym na wyświetlaczu pojawi się menu.</p>
+                    </div>
+                </li>
+
+                <!-- Krok 4 -->
+                <li class="relative flex items-start timeline-step">
+                    <div class="flex-shrink-0 w-10 h-10 bg-szpital-blue rounded-full flex items-center justify-center text-white font-bold text-lg z-10 shadow">4</div>
+                    <div class="ml-6 bg-white p-6 rounded-lg shadow-md w-full">
+                        <h3 class="text-xl font-semibold text-szpital-blue-dark mb-2">Ustawienie Temperatury</h3>
+                        <p class="text-szpital-grey-dark">Użyj przycisków ▲ (góra) i ▼ (dół) na panelu sterowania (04), aby ustawić żądaną temperaturę (np. 15°C - 18°C dla kończyn). Wartość zostanie zapisana automatycznie.</p>
+                        <p class="text-sm text-szpital-grey mt-2">Zalecane temperatury: Twarz (16-19°C), Kończyny (15-18°C), Tułów (18-21°C).</p>
+                    </div>
+                </li>
+                
+                <!-- Krok 5 -->
+                <li class="relative flex items-start timeline-step">
+                    <div class="flex-shrink-0 w-10 h-10 bg-szpital-blue rounded-full flex items-center justify-center text-white font-bold text-lg z-10 shadow">5</div>
+                    <div class="ml-6 bg-white p-6 rounded-lg shadow-md w-full">
+                        <h3 class="text-xl font-semibold text-szpital-blue-dark mb-2">Podłączenie Mankietów i Start</h3>
+                        <p class="text-szpital-grey-dark mb-2">Podłącz węże do mankietów, a następnie do złączy (01) w urządzeniu. Usłyszysz charakterystyczne "kliknięcie".</p>
+                        <p class="text-szpital-grey-dark">Naciśnij przycisk ↵ (Enter/Start), aby uruchomić pompę. Upewnij się, że woda krąży w mankiecie.</p>
+                    </div>
+                </li>
+
+                <!-- Krok 6 -->
+                <li class="relative flex items-start">
+                    <div class="flex-shrink-0 w-10 h-10 bg-szpital-blue rounded-full flex items-center justify-center text-white font-bold text-lg z-10 shadow">6</div>
+                    <div class="ml-6 bg-white p-6 rounded-lg shadow-md w-full">
+                        <h3 class="text-xl font-semibold text-szpital-blue-dark mb-2">Zatrzymanie Pracy</h3>
+                        <p class="text-szpital-grey-dark">Naciśnij przycisk ↵ (Stop), aby zatrzymać pracę pompy. Wyłącz urządzenie głównym włącznikiem z tyłu, jeśli nie będzie używane przez dłuższy czas.</p>
+                    </div>
+                </li>
+            </ol>
+        </section>
+
+        <!-- Sekcja: Rozwiązywanie Problemów (Alarmy) -->
+        <section id="alarms" class="scroll-mt-24 mb-8">
+            <h2 class="text-3xl font-bold text-szpital-blue-dark text-center mb-8">Rozwiązywanie Problemów (Alarmy)</h2>
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full min-w-[600px] text-left">
+                        <thead class="bg-szpital-grey-light border-b border-gray-300">
+                            <tr>
+                                <th class="py-3 px-4 sm:px-6 font-semibold text-szpital-grey-dark tracking-wider uppercase text-sm">Błąd / Problem</th>
+                                <th class="py-3 px-4 sm:px-6 font-semibold text-szpital-grey-dark tracking-wider uppercase text-sm">Możliwa Przyczyna</th>
+                                <th class="py-3 px-4 sm:px-6 font-semibold text-szpital-grey-dark tracking-wider uppercase text-sm">Działanie / Rozwiązanie</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <!-- Błąd E21 -->
+                            <tr class="hover:bg-gray-50">
+                                <td class="py-4 px-4 sm:px-6 font-medium text-red-600">Błąd E21 (sygnał dźwiękowy)</td>
+                                <td class="py-4 px-4 sm:px-6 text-szpital-grey-dark">Niewystarczająca ilość wody w zbiorniku.</td>
+                                <td class="py-4 px-4 sm:px-6 text-szpital-grey-dark">
+                                    <ol class="list-decimal list-inside">
+                                        <li>Wyłącz urządzenie.</li>
+                                        <li>Uzupełnij <strong>wodę demineralizowaną</strong> do poziomu "max".</li>
+                                        <li>Włącz urządzenie ponownie.</li>
+                                    </ol>
+                                </td>
+                            </tr>
+                            <!-- Brak cyrkulacji -->
+                            <tr class="hover:bg-gray-50">
+                                <td class="py-4 px-4 sm:px-6 font-medium">Brak lub słaba cyrkulacja wody</td>
+                                <td class="py-4 px-4 sm:px-6 text-szpital-grey-dark">
+                                    <ul class="list-disc list-inside">
+                                        <li>Pompa nie została odpowietrzona.</li>
+                                        <li>Zagięty wąż lub mankiet.</li>
+                                        <li>Złącze nie jest prawidłowo "wkliknięte".</li>
+                                    </ul>
+                                </td>
+                                <td class="py-4 px-4 sm:px-6 text-szpital-grey-dark">
+                                    <ul class="list-disc list-inside">
+                                        <li>Odpowietrz pompę (patrz Krok 2).</li>
+                                        <li>Sprawdź i wyprostuj węże/mankiet.</li>
+                                        <li>Dociśnij złącza, aż usłyszysz "klik".</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <!-- Błędy E01 - E04 -->
+                            <tr class="hover:bg-gray-50">
+                                <td class="py-4 px-4 sm:px-6 font-medium text-red-600">Błąd E01 / E02 / E03 / E04</td>
+                                <td class="py-4 px-4 sm:px-6 text-szpital-grey-dark">Błąd czujnika temperatury (np. E03 = temp. za niska; E04 = temp. za wysoka).</td>
+                                <td class="py-4 px-4 sm:px-6 text-szpital-grey-dark">
+                                    Spróbuj ponownie uruchomić urządzenie. Jeśli błąd się powtarza, skontaktuj się z serwisem technicznym (może być wymagana rekalibracja).
+                                </td>
+                            </tr>
+                             <!-- Błąd E11 -->
+                            <tr class="hover:bg-gray-50">
+                                <td class="py-4 px-4 sm:px-6 font-medium text-red-600">Błąd E11</td>
+                                <td class="py-4 px-4 sm:px-6 text-szpital-grey-dark">Awaria pompy.</td>
+                                <td class="py-4 px-4 sm:px-6 text-szpital-grey-dark">Wyłącz urządzenie. Wymagany kontakt z serwisem technicznym.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sekcja: Czyszczenie i Konserwacja -->
+        <section id="cleaning" class="scroll-mt-24 mb-8">
+            <h2 class="text-3xl font-bold text-szpital-blue-dark text-center mb-8">Czyszczenie i Konserwacja</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Czyszczenie Urządzenia -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold text-szpital-blue-dark mb-3">Obudowa Urządzenia</h3>
+                    <p class="text-szpital-grey-dark">Przecierać powierzchnię standardowymi środkami dezynfekującymi zatwierdzonymi do użytku klinicznego. Upewnij się, że żadne płyny nie dostały się do otworów wentylacyjnych.</p>
+                </div>
+                <!-- Czyszczenie Mankietów -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold text-szpital-blue-dark mb-3">Mankiety</h3>
+                    <p class="text-szpital-grey-dark">Czyścić i dezynfekować ręcznie (np. metodą przecierania) środkami zatwierdzonymi do użytku klinicznego (np. na bazie alkoholu). Postępuj zgodnie z planem higieny szpitala.</p>
+                </div>
+                <!-- Wymiana Filtra i Wody -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold text-szpital-blue-dark mb-3">Woda i Filtr (co 6 miesięcy)</h3>
+                    <p class="text-szpital-grey-dark">Wymieniaj filtr (02) i <strong>wodę demineralizowaną</strong> co najmniej co 6 miesięcy. Po wymianie pamiętaj o odpowietrzeniu pompy (patrz Krok 2).</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Stopka -->
+    <footer class="bg-szpital-grey-dark text-szpital-grey-light p-6 text-center mt-12">
+        <p class_="text-sm">To jest skrócona instrukcja obsługi. Zawsze zapoznaj się z pełną dokumentacją producenta przed użyciem urządzenia.</p>
+        <p class="text-xs opacity-70 mt-2">HILOTHERM HT 02 | Interaktywny Przewodnik</p>
+    </footer>
+
+    <!-- Skrypt do obsługi menu mobilnego -->
+    <script>
+        const menuBtn = document.getElementById('menu-btn');
+        const menuLinks = document.getElementById('menu-links');
+        const menuIconOpen = document.getElementById('menu-icon-open');
+        const menuIconClose = document.getElementById('menu-icon-close');
+        const navLinks = menuLinks.querySelectorAll('a');
+
+        function toggleMenu() {
+            menuLinks.classList.toggle('hidden');
+            menuIconOpen.classList.toggle('hidden');
+            menuIconClose.classList.toggle('hidden');
+        }
+
+        // Przełączanie menu przyciskiem
+        menuBtn.addEventListener('click', toggleMenu);
+
+        // Zamykanie menu po kliknięciu linku (na mobilnych)
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (!menuLinks.classList.contains('hidden')) {
+                    toggleMenu();
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
